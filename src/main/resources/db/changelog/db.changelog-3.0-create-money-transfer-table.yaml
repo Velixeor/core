@@ -1,0 +1,58 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: postgres
+      changes:
+        - createTable:
+            tableName: money_transfer
+            schemaName: core
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: from_whom
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: to_whom
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_create
+                  type: TIMESTAMP WITH TIME ZONE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: currency
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: count
+                  type: INT
+                  constraints:
+                    nullable: false
+                    unique: true
+        - addForeignKeyConstraint:
+            baseTableName: money_transfer
+            baseColumnNames: from_whom
+            baseTableSchemaName: core
+            constraintName: fk_user_from
+            referencedTableName: bank_account
+            referencedColumnNames: id
+            referencedTableSchemaName: core
+        - addForeignKeyConstraint:
+            baseTableName: money_transfer
+            baseColumnNames: to_whom
+            baseTableSchemaName: core
+            constraintName: fk_user_to
+            referencedTableName: bank_account
+            referencedColumnNames: id
+            referencedTableSchemaName: core
