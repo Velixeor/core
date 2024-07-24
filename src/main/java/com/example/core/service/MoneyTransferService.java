@@ -31,20 +31,20 @@ public class MoneyTransferService {
     public MoneyTransferDTO createMoneyTransfer(MoneyTransferDTO moneyTransferDTO) {
         log.info("Start transactional");
         MoneyTransfer moneyTransfer = new MoneyTransfer();
-        TransferringDataInMoneyTransferFromMoneyTransferDTO(moneyTransferDTO, moneyTransfer);
+        transferringDataInMoneyTransferFromMoneyTransferDTO(moneyTransferDTO, moneyTransfer);
         if (moneyTransfer.getBankAccountFrom().getCurrency().equals(moneyTransfer.getBankAccountTo().getCurrency())) {
             MoneyTransfer moneyTransferResult = moneyTransferRepository.save(moneyTransfer);
             bankAccountService.updateBalanceBankAccountById(moneyTransfer.getBankAccountTo().getId(), moneyTransferDTO.getCount());
             bankAccountService.updateBalanceBankAccountById(moneyTransfer.getBankAccountFrom().getId(), -moneyTransferDTO.getCount());
             log.info("Money Transfer create successfully: {}", moneyTransferDTO);
-            return TransferringDataInMoneyTransferDTOFromMoneyTransfer(moneyTransferResult);
+            return transferringDataInMoneyTransferDTOFromMoneyTransfer(moneyTransferResult);
         } else {
             log.warn("Failed to  create  Money Transfer: {}", moneyTransferDTO);
             throw new MoneyTransferCreateException(moneyTransferDTO);
         }
     }
 
-    private void TransferringDataInMoneyTransferFromMoneyTransferDTO(MoneyTransferDTO moneyTransferDTO,
+    private void transferringDataInMoneyTransferFromMoneyTransferDTO(MoneyTransferDTO moneyTransferDTO,
                                                                      MoneyTransfer moneyTransfer) {
         moneyTransfer.setCount(moneyTransferDTO.getCount());
         moneyTransfer.setCurrency(moneyTransferDTO.getCurrency());
@@ -53,7 +53,7 @@ public class MoneyTransferService {
         moneyTransfer.setBankAccountTo(bankAccountRepository.getBankAccountById(moneyTransferDTO.getBankAccountToId()));
     }
 
-    private MoneyTransferDTO TransferringDataInMoneyTransferDTOFromMoneyTransfer(MoneyTransfer moneyTransfer) {
+    private MoneyTransferDTO transferringDataInMoneyTransferDTOFromMoneyTransfer(MoneyTransfer moneyTransfer) {
         MoneyTransferDTO moneyTransferDTO = new MoneyTransferDTO();
         moneyTransferDTO.setId(moneyTransfer.getId());
         moneyTransferDTO.setCount(moneyTransfer.getCount());
