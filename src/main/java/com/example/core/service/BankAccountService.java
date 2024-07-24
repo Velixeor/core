@@ -51,7 +51,7 @@ public class BankAccountService {
             log.info("Bank Account update successfully: {}", id);
             return bankAccountDTOResult;
         } else {
-            log.warn("Failed to  update  Bank Account: {}", id);
+            log.error("Failed to  update  Bank Account: {}", id);
             throw new BankAccountUpdateBalanceException(id, balanceChanges);
         }
 

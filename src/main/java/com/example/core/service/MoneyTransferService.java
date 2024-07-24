@@ -39,7 +39,7 @@ public class MoneyTransferService {
             log.info("Money Transfer create successfully: {}", moneyTransferDTO);
             return transferringDataInMoneyTransferDTOFromMoneyTransfer(moneyTransferResult);
         } else {
-            log.warn("Failed to  create  Money Transfer: {}", moneyTransferDTO);
+            log.error("Failed to  create  Money Transfer: {}", moneyTransferDTO);
             throw new MoneyTransferCreateException(moneyTransferDTO);
         }
     }
