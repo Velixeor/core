@@ -3,6 +3,7 @@ package com.example.core.controller;
 
 import com.example.core.dto.MoneyTransferDTO;
 import com.example.core.service.MoneyTransferService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,10 @@ public class MoneyTransferController {
     public MoneyTransferController(MoneyTransferService moneyTransferService) {
         this.moneyTransferService = moneyTransferService;
     }
-
+    @Operation(
+            summary = "Создание платежа",
+            description = "Позволяет создать платеж и поменять баланс на соответствующих аккаунтов"
+    )
     @PostMapping("/create")
     public ResponseEntity<MoneyTransferDTO> createMoneyTransfer(@RequestBody MoneyTransferDTO moneyTransferDTO) {
         return new ResponseEntity<>(moneyTransferService.createMoneyTransfer(moneyTransferDTO), HttpStatus.CREATED);

@@ -16,27 +16,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class BankAccountService {
     private final BankAccountRepository bankAccountRepository;
     private final UserRepository userRepository;
-    private final PaymentService paymentService;
 
-    public BankAccountService(BankAccountRepository bankAccountRepository, UserRepository userRepository,
-                              PaymentService paymentService) {
+
+    public BankAccountService(BankAccountRepository bankAccountRepository, UserRepository userRepository) {
         this.bankAccountRepository = bankAccountRepository;
         this.userRepository = userRepository;
-        this.paymentService = paymentService;
-    }
 
+    }
+    @Transactional
     public BankAccountDTO createBankAccount(BankAccountDTO bankAccountDTO) {
         BankAccount bankAccount = new BankAccount();
-        TransferringDataInBankAccountFromBankAccountDTO(bankAccountDTO, bankAccount);
+        transferringDataInBankAccountFromBankAccountDTO(bankAccountDTO, bankAccount);
+        bankAccount.setBalance(0);
         BankAccount bankAccountResult = bankAccountRepository.save(bankAccount);
-        return TransferringDataInBankAccountDTOFromBankAccount(bankAccountResult);
+        return transferringDataInBankAccountDTOFromBankAccount(bankAccountResult);
     }
 
     public BankAccountDTO updateBankAccountById(BankAccountDTO bankAccountDTO) {
         BankAccount bankAccount = bankAccountRepository.getBankAccountById(bankAccountDTO.getId());
-        TransferringDataInBankAccountFromBankAccountDTO(bankAccountDTO, bankAccount);
+        transferringDataInBankAccountFromBankAccountDTO(bankAccountDTO, bankAccount);
         BankAccount bankAccountResult = bankAccountRepository.save(bankAccount);
-        return TransferringDataInBankAccountDTOFromBankAccount(bankAccountResult);
+        return transferringDataInBankAccountDTOFromBankAccount(bankAccountResult);
     }
 
     @Transactional
@@ -46,8 +46,8 @@ public class BankAccountService {
         bankAccount.setBalance(bankAccount.getBalance() + balanceChanges);
         if (bankAccount.getBalance() > 0) {
             BankAccount bankAccountResult = bankAccountRepository.save(bankAccount);
-            BankAccountDTO bankAccountDTOResult = TransferringDataInBankAccountDTOFromBankAccount(bankAccountResult);
-            paymentService.updateBankAccountFromPayment(bankAccountDTOResult);
+            BankAccountDTO bankAccountDTOResult = transferringDataInBankAccountDTOFromBankAccount(bankAccountResult);
+
             log.info("Bank Account update successfully: {}", id);
             return bankAccountDTOResult;
         } else {
@@ -57,7 +57,7 @@ public class BankAccountService {
 
     }
 
-    private void TransferringDataInBankAccountFromBankAccountDTO(BankAccountDTO bankAccountDTO,
+    private void transferringDataInBankAccountFromBankAccountDTO(final BankAccountDTO bankAccountDTO,
                                                                  BankAccount bankAccount) {
         bankAccount.setBalance(bankAccountDTO.getBalance());
         bankAccount.setCode(bankAccountDTO.getCode());
@@ -69,7 +69,7 @@ public class BankAccountService {
 
     }
 
-    private BankAccountDTO TransferringDataInBankAccountDTOFromBankAccount(BankAccount bankAccount) {
+    private BankAccountDTO transferringDataInBankAccountDTOFromBankAccount(final BankAccount bankAccount) {
         BankAccountDTO bankAccountDTO = new BankAccountDTO();
         bankAccountDTO.setBalance(bankAccount.getBalance());
         bankAccountDTO.setCode(bankAccount.getCode());

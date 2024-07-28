@@ -26,6 +26,7 @@ public class BankAccount {
     private String code;
     @Column(name = "date_create", nullable = false)
     private ZonedDateTime dateCreate;
+    @Enumerated(EnumType.STRING)
     @Column(name="status",nullable = false)
     private Status status;
     @Column(name = "currency", nullable = false)

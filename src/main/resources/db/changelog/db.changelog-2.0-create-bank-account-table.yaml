@@ -35,13 +35,11 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
-
               - column:
                   name: balance
                   type: INT
                   constraints:
                     nullable: false
-
               - column:
                   name: user_id
                   type: INT
@@ -55,3 +53,9 @@ databaseChangeLog:
             referencedTableName: user
             referencedColumnNames: id
             referencedTableSchemaName: core
+        - sql:
+            dbms: postgresql
+            sql: |
+              ALTER TABLE core.bank_account
+              ADD CONSTRAINT chk_bank_account_status
+              CHECK (status IN ('DELETE', 'ACTIVE', 'FREEZED'));

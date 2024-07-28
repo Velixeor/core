@@ -1,4 +1,4 @@
-package com.example.core.util;
+package com.example.core;
 
 
 import org.springframework.context.annotation.Bean;

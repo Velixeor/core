@@ -16,4 +16,5 @@ public class UserDTO {
     private Integer id;
     private String login;
     private Status status;
+
 }

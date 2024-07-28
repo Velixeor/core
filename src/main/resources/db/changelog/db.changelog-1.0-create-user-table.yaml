@@ -25,3 +25,9 @@ databaseChangeLog:
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
+        - sql:
+            dbms: postgresql
+            sql: |
+              ALTER TABLE core.user
+              ADD CONSTRAINT chk_user_status
+              CHECK (status IN ('DELETE', 'ACTIVE', 'FREEZED'));

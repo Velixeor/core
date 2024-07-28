@@ -23,15 +23,4 @@ public class PaymentService {
         this.restTemplate = restTemplate;
     }
 
-    @Transactional
-    public BankAccountDTO updateBankAccountFromPayment(BankAccountDTO bankAccountDTO) {
-        String url = urlPayment + "/bank-account/update";
-        log.info("Request to payment /bank-account/update: {}", bankAccountDTO);
-        HttpEntity<BankAccountDTO> requestEntity = new HttpEntity<>(bankAccountDTO);
-        ResponseEntity<BankAccountDTO> response = restTemplate.exchange(url,
-                HttpMethod.PUT,
-                requestEntity,
-                BankAccountDTO.class);
-        return response.getBody();
-    }
 }

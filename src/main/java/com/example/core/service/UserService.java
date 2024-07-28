@@ -6,6 +6,7 @@ import com.example.core.entity.User;
 import com.example.core.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Slf4j
@@ -18,15 +19,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-
+    @Transactional
     public UserDTO createUser(UserDTO userDTO) {
         User user = new User();
         user.setId(userDTO.getId());
         user.setLogin(userDTO.getLogin());
         user.setStatus(userDTO.getStatus());
         User userResult = userRepository.save(user);
-        UserDTO userDTOResult = new UserDTO(userResult.getId(), userResult.getLogin(), userResult.getStatus());
-        return userDTOResult;
+        UserDTO resultUserDto = new UserDTO(userResult.getId(), userResult.getLogin(), userResult.getStatus());
+        return resultUserDto;
     }
 
     public UserDTO updateUserById(UserDTO userDTO) {
@@ -36,8 +37,8 @@ public class UserService {
 
         User userResult = userRepository.save(user);
 
-        UserDTO userDTOResult = new UserDTO(userResult.getId(), userResult.getLogin(), userResult.getStatus());
-        return userDTOResult;
+        UserDTO resultUserDto = new UserDTO(userResult.getId(), userResult.getLogin(), userResult.getStatus());
+        return resultUserDto;
     }
 
 }

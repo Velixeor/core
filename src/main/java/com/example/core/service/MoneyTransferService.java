@@ -44,7 +44,7 @@ public class MoneyTransferService {
         }
     }
 
-    private void transferringDataInMoneyTransferFromMoneyTransferDTO(MoneyTransferDTO moneyTransferDTO,
+    private void transferringDataInMoneyTransferFromMoneyTransferDTO(final MoneyTransferDTO moneyTransferDTO,
                                                                      MoneyTransfer moneyTransfer) {
         moneyTransfer.setCount(moneyTransferDTO.getCount());
         moneyTransfer.setCurrency(moneyTransferDTO.getCurrency());
@@ -53,7 +53,7 @@ public class MoneyTransferService {
         moneyTransfer.setBankAccountTo(bankAccountRepository.getBankAccountById(moneyTransferDTO.getBankAccountToId()));
     }
 
-    private MoneyTransferDTO transferringDataInMoneyTransferDTOFromMoneyTransfer(MoneyTransfer moneyTransfer) {
+    private MoneyTransferDTO transferringDataInMoneyTransferDTOFromMoneyTransfer(final MoneyTransfer moneyTransfer) {
         MoneyTransferDTO moneyTransferDTO = new MoneyTransferDTO();
         moneyTransferDTO.setId(moneyTransfer.getId());
         moneyTransferDTO.setCount(moneyTransfer.getCount());
