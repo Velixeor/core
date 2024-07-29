@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 
@@ -14,7 +15,7 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CoreSynchronizationDTO {
+public class CoreSynchronizationDTO  {
     private Integer bankAccountID;
     private String code;
     private ZonedDateTime dateCreate;

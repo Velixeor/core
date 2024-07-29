@@ -15,14 +15,18 @@ public class SynchronizationService {
     private final BankAccountService bankAccountService;
     private final UserService userService;
 
-    public SynchronizationService(BankAccountService bankAccountService, UserService userService) {
+
+    public SynchronizationService(BankAccountService bankAccountService, UserService userService
+    ) {
         this.bankAccountService = bankAccountService;
         this.userService = userService;
+
     }
+
     @Transactional
-    public void startSynchronization(CoreSynchronizationDTO coreSynchronizationDTO){
-        UserDTO userDTO=new UserDTO(coreSynchronizationDTO.getUserId(), coreSynchronizationDTO.getLogin(),coreSynchronizationDTO.getUserStatus());
-        BankAccountDTO bankAccountDTO= BankAccountDTO.builder()
+    public void startSynchronization(CoreSynchronizationDTO coreSynchronizationDTO) {
+        UserDTO userDTO = new UserDTO(coreSynchronizationDTO.getUserId(), coreSynchronizationDTO.getLogin(), coreSynchronizationDTO.getUserStatus());
+        BankAccountDTO bankAccountDTO = BankAccountDTO.builder()
                 .id(coreSynchronizationDTO.getBankAccountID())
                 .code(coreSynchronizationDTO.getCode())
                 .balance(0)
@@ -34,5 +38,8 @@ public class SynchronizationService {
         userService.createUser(userDTO);
         bankAccountService.createBankAccount(bankAccountDTO);
 
+
     }
+
+
 }
