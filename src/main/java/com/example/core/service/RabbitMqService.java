@@ -25,7 +25,7 @@ public class RabbitMqService {
     public void receiveMessage(Message message) {
         MessageProperties properties = message.getMessageProperties();
         String messageType = properties.getHeader("messageType");
-
+        messageType= messageType+"Handler";
         try {
             MessageHandler handler = messageHandlerFactory.getHandler(messageType);
             if (handler != null) {
