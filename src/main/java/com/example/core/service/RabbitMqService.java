@@ -2,6 +2,8 @@ package com.example.core.service;
 
 
 import com.example.core.dto.CoreSynchronizationDTO;
+import com.example.core.messages.MessageHandler;
+import com.example.core.messages.MessageHandlerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -13,22 +15,26 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class RabbitMqService {
-    private final SynchronizationService synchronizationService;
-    private final ObjectMapper objectMapper;
-    public RabbitMqService(SynchronizationService synchronizationService, ObjectMapper objectMapper) {
-        this.synchronizationService = synchronizationService;
-        this.objectMapper = objectMapper;
+    private final MessageHandlerFactory messageHandlerFactory;
+
+    public RabbitMqService(MessageHandlerFactory messageHandlerFactory) {
+        this.messageHandlerFactory = messageHandlerFactory;
     }
 
     @RabbitListener(queues = "QueuePayments")
     public void receiveMessage(Message message) {
         MessageProperties properties = message.getMessageProperties();
         String messageType = properties.getHeader("messageType");
+
         try {
-            CoreSynchronizationDTO coreSynchronizationDTO = objectMapper.readValue(message.getBody(), CoreSynchronizationDTO.class);
-            synchronizationService.startSynchronization(coreSynchronizationDTO);
+            MessageHandler handler = messageHandlerFactory.getHandler(messageType);
+            if (handler != null) {
+                handler.handleMessage(message);
+            } else {
+                log.warn("Unknown message type: {}", messageType);
+            }
         } catch (Exception e) {
-        e.printStackTrace();
+            log.error("Error processing message", e);
         }
     }
 }
