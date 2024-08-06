@@ -3,6 +3,7 @@ package com.example.core.controller;
 
 import com.example.core.dto.BankAccountDTO;
 import com.example.core.service.BankAccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,12 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Controller
 @RequestMapping("/api/v1/bank-account")
+@RequiredArgsConstructor
 public class BankAccountController {
     private final BankAccountService bankAccountService;
 
-    public BankAccountController(BankAccountService bankAccountService) {
-        this.bankAccountService = bankAccountService;
-    }
 
     @PostMapping("/create")
     public ResponseEntity<BankAccountDTO> createBankAccount(@RequestBody BankAccountDTO bankAccountDTO) {

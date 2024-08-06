@@ -6,6 +6,7 @@ import com.example.core.entity.MoneyTransfer;
 import com.example.core.exception.moneyTransfer.MoneyTransferCreateException;
 import com.example.core.repository.BankAccountRepository;
 import com.example.core.repository.MoneyTransferRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,20 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class MoneyTransferService {
 
     private final MoneyTransferRepository moneyTransferRepository;
     private final BankAccountRepository bankAccountRepository;
     private final BankAccountService bankAccountService;
-
-
-    public MoneyTransferService(MoneyTransferRepository moneyTransferRepository,
-                                BankAccountRepository bankAccountRepository, BankAccountService bankAccountService) {
-        this.moneyTransferRepository = moneyTransferRepository;
-        this.bankAccountRepository = bankAccountRepository;
-        this.bankAccountService = bankAccountService;
-    }
-
     @Transactional
     public MoneyTransferDTO createMoneyTransfer(MoneyTransferDTO moneyTransferDTO) {
         log.info("Start transactional");
@@ -63,4 +56,5 @@ public class MoneyTransferService {
         moneyTransferDTO.setBankAccountToId(moneyTransfer.getBankAccountTo().getId());
         return moneyTransferDTO;
     }
+
 }

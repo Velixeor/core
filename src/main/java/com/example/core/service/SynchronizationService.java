@@ -4,6 +4,7 @@ package com.example.core.service;
 import com.example.core.dto.BankAccountDTO;
 import com.example.core.dto.CoreSynchronizationDTO;
 import com.example.core.dto.UserDTO;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,17 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class SynchronizationService {
     private final BankAccountService bankAccountService;
     private final UserService userService;
-
-
-    public SynchronizationService(BankAccountService bankAccountService, UserService userService
-    ) {
-        this.bankAccountService = bankAccountService;
-        this.userService = userService;
-
-    }
 
     @Transactional
     public void startSynchronization(CoreSynchronizationDTO coreSynchronizationDTO) {

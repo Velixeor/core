@@ -6,6 +6,7 @@ import com.example.core.entity.BankAccount;
 import com.example.core.exception.bankAccount.BankAccountUpdateBalanceException;
 import com.example.core.repository.BankAccountRepository;
 import com.example.core.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,16 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class BankAccountService {
     private final BankAccountRepository bankAccountRepository;
     private final UserRepository userRepository;
 
-
-    public BankAccountService(BankAccountRepository bankAccountRepository, UserRepository userRepository) {
-        this.bankAccountRepository = bankAccountRepository;
-        this.userRepository = userRepository;
-
-    }
     @Transactional
     public BankAccountDTO createBankAccount(BankAccountDTO bankAccountDTO) {
         BankAccount bankAccount = new BankAccount();
