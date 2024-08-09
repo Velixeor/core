@@ -1,6 +1,7 @@
 package com.example.core.service;
 
 
+import com.example.core.exception.moneyTransfer.PaymentCreateException;
 import com.example.core.messages.MessageHandler;
 import com.example.core.messages.MessageHandlerFactory;
 import com.example.paymentXSD.Document;
@@ -65,6 +66,7 @@ public class RabbitMqService {
             log.info("Document is: {}", document);
         } catch (Exception e) {
             log.error("Error processing message", e);
+            throw new PaymentCreateException(paymentXML);
         }
     }
 
