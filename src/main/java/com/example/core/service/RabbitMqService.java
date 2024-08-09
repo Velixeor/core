@@ -4,7 +4,6 @@ package com.example.core.service;
 import com.example.core.messages.MessageHandler;
 import com.example.core.messages.MessageHandlerFactory;
 import com.example.paymentXSD.Document;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -15,13 +14,17 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import java.io.StringReader;
+
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RabbitMqService {
     private final MessageHandlerFactory messageHandlerFactory;
-    private final ObjectMapper objectMapper;
 
     @RabbitListener(queues = "QueuePayments")
     @Retryable(backoff = @Backoff(delay = 1000))
@@ -45,10 +48,21 @@ public class RabbitMqService {
     @RabbitListener(queues = "PaymentXml")
     @Retryable(backoff = @Backoff(delay = 1000))
     @Transactional
-    public void receivePaymentXMl(Message message) {
+    public void receivePaymentXMl(String paymentXML) {
         try {
-            Document document = objectMapper.readValue(message.getBody(), Document.class);
-            log.info("Document is:{}", document);
+            log.debug("Original XML: {}", paymentXML);
+
+
+            JAXBContext jaxbContext = JAXBContext.newInstance(Document.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+            JAXBElement<Document> root =
+                    (JAXBElement<Document>) unmarshaller.unmarshal(new StringReader(paymentXML));
+
+            Document document = root.getValue();
+
+
+            log.info("Document is: {}", document);
         } catch (Exception e) {
             log.error("Error processing message", e);
         }
