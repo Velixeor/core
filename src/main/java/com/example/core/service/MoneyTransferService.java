@@ -3,6 +3,7 @@ package com.example.core.service;
 
 import com.example.core.dto.MoneyTransferDTO;
 import com.example.core.entity.MoneyTransfer;
+import com.example.core.entity.MoneyTransferStatus;
 import com.example.core.exception.moneyTransfer.MoneyTransferCreateException;
 import com.example.core.repository.BankAccountRepository;
 import com.example.core.repository.MoneyTransferRepository;
@@ -19,16 +20,14 @@ public class MoneyTransferService {
 
     private final MoneyTransferRepository moneyTransferRepository;
     private final BankAccountRepository bankAccountRepository;
-    private final BankAccountService bankAccountService;
     @Transactional
     public MoneyTransferDTO createMoneyTransfer(MoneyTransferDTO moneyTransferDTO) {
         log.info("Start transactional");
         MoneyTransfer moneyTransfer = new MoneyTransfer();
         transferringDataInMoneyTransferFromMoneyTransferDTO(moneyTransferDTO, moneyTransfer);
+        moneyTransfer.setStatus(MoneyTransferStatus.START);
         if (moneyTransfer.getBankAccountFrom().getCurrency().equals(moneyTransfer.getBankAccountTo().getCurrency())) {
             MoneyTransfer moneyTransferResult = moneyTransferRepository.save(moneyTransfer);
-            bankAccountService.updateBalanceBankAccountById(moneyTransfer.getBankAccountTo().getId(), moneyTransferDTO.getCount());
-            bankAccountService.updateBalanceBankAccountById(moneyTransfer.getBankAccountFrom().getId(), -moneyTransferDTO.getCount());
             log.info("Money Transfer create successfully: {}", moneyTransferDTO);
             return transferringDataInMoneyTransferDTOFromMoneyTransfer(moneyTransferResult);
         } else {
@@ -39,21 +38,24 @@ public class MoneyTransferService {
 
     private void transferringDataInMoneyTransferFromMoneyTransferDTO(final MoneyTransferDTO moneyTransferDTO,
                                                                      MoneyTransfer moneyTransfer) {
+        moneyTransfer.setUid(moneyTransferDTO.getId());
         moneyTransfer.setCount(moneyTransferDTO.getCount());
         moneyTransfer.setCurrency(moneyTransferDTO.getCurrency());
         moneyTransfer.setDateCreate(moneyTransferDTO.getDateCreate());
         moneyTransfer.setBankAccountFrom(bankAccountRepository.getBankAccountById(moneyTransferDTO.getBankAccountFromId()));
         moneyTransfer.setBankAccountTo(bankAccountRepository.getBankAccountById(moneyTransferDTO.getBankAccountToId()));
+        moneyTransfer.setStatus(moneyTransferDTO.getStatus());
     }
 
     private MoneyTransferDTO transferringDataInMoneyTransferDTOFromMoneyTransfer(final MoneyTransfer moneyTransfer) {
         MoneyTransferDTO moneyTransferDTO = new MoneyTransferDTO();
-        moneyTransferDTO.setId(moneyTransfer.getId());
+        moneyTransferDTO.setId(moneyTransfer.getUid());
         moneyTransferDTO.setCount(moneyTransfer.getCount());
         moneyTransferDTO.setDateCreate(moneyTransfer.getDateCreate());
         moneyTransferDTO.setCurrency(moneyTransfer.getCurrency());
         moneyTransferDTO.setBankAccountFromId(moneyTransfer.getBankAccountFrom().getId());
         moneyTransferDTO.setBankAccountToId(moneyTransfer.getBankAccountTo().getId());
+        moneyTransferDTO.setStatus(moneyTransfer.getStatus());
         return moneyTransferDTO;
     }
 

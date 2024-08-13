@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -55,7 +56,7 @@ class MoneyTransferServiceTest {
         bankAccountTo.setCurrency("USD");
 
         MoneyTransfer savedMoneyTransfer = new MoneyTransfer();
-        savedMoneyTransfer.setId(1);
+        savedMoneyTransfer.setUid(new UUID(1,2));
         savedMoneyTransfer.setCount(100);
         savedMoneyTransfer.setCurrency("USD");
         savedMoneyTransfer.setDateCreate(fixedDateTime);

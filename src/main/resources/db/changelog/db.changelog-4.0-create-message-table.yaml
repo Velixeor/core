@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: postgres
+      changes:
+        - createTable:
+            tableName: message
+            schemaName: core
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: body
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: uid
+                  type: UUID
+
+
+        - addForeignKeyConstraint:
+            baseTableName: message
+            baseColumnNames: uid
+            baseTableSchemaName: core
+            constraintName: fk_money_transfer_uid
+            referencedTableName: money_transfer
+            referencedColumnNames: uid
+            referencedTableSchemaName: core

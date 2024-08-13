@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 
 @Entity
@@ -18,9 +19,8 @@ import java.time.ZonedDateTime;
 @Table(name = "money_transfer", schema = "core")
 public class MoneyTransfer {
     @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "uid", updatable = false, nullable = false)
+    private UUID uid;
     @Column(name = "currency", nullable = false)
     private String currency;
     @Column(name = "count", nullable = false)
@@ -33,4 +33,7 @@ public class MoneyTransfer {
     @ManyToOne()
     @JoinColumn(name = "to_whom", nullable = false)
     private BankAccount bankAccountTo;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private MoneyTransferStatus status;
 }

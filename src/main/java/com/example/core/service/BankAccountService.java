@@ -53,6 +53,12 @@ public class BankAccountService {
 
     }
 
+    public BankAccountDTO getBankAccountById(Integer id){
+       BankAccount bankAccount= bankAccountRepository.getBankAccountById(id);
+       return transferringDataInBankAccountDTOFromBankAccount(bankAccount);
+    }
+
+
     private void transferringDataInBankAccountFromBankAccountDTO(final BankAccountDTO bankAccountDTO,
                                                                  BankAccount bankAccount) {
         bankAccount.setBalance(bankAccountDTO.getBalance());

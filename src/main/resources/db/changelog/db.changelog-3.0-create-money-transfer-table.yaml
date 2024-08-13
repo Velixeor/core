@@ -8,9 +8,8 @@ databaseChangeLog:
             schemaName: core
             columns:
               - column:
-                  name: id
-                  type: INT
-                  autoIncrement: true
+                  name: uid
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -31,6 +30,11 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: currency
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
