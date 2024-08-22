@@ -1,6 +1,7 @@
 package com.example.core.service;
 
 
+import com.example.core.condition.MessageStarter;
 import com.example.core.exception.moneyTransfer.PaymentCreateException;
 import com.example.core.messages.MessageHandler;
 import com.example.core.messages.MessageHandlerFactory;
@@ -25,8 +26,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RabbitMqService {
     private final MessageHandlerFactory messageHandlerFactory;
-    private final  EventPublisher eventPublisher;
-    private final RuntimeService runtimeService;
+    private final MessageStarter messageStarter;
 
     @RabbitListener(queues = "QueuePayments")
     @Retryable(backoff = @Backoff(delay = 1000))
@@ -53,11 +53,7 @@ public class RabbitMqService {
     public void receivePaymentXMl(String paymentXML) {
         try {
             log.debug("Original XML: {}", paymentXML);
-
-            //eventPublisher.startProcess(paymentXML);
-           Map<String, Object> variables = new HashMap<>();
-          variables.put("w",paymentXML);
-          runtimeService.startProcessInstanceByKey("Process_0et24m7",variables);
+            messageStarter.start(paymentXML);
 
         } catch (Exception e) {
             log.error("Error processing message", e);
