@@ -2,7 +2,6 @@ package com.example.delegats;
 
 
 import com.example.core.entity.Message;
-import com.example.core.events.DocumentUnmarshalledEvent;
 import com.example.core.exception.moneyTransfer.PaymentCreateException;
 import com.example.delegats.messages.CamundaMessage;
 import com.example.paymentXSD.Document;

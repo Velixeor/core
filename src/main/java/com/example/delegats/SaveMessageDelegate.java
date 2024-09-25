@@ -24,6 +24,7 @@ public class SaveMessageDelegate implements JavaDelegate {
         MoneyTransferDTO moneyTransferDTO = null;
         messageRepository.save(message);
         CamundaMessage camundaMessage = new CamundaMessage(moneyTransferDTO,message,null);
-        execution.setVariable("s", camundaMessage.toJson());
+
+        execution.setVariable("savedM", camundaMessage.toJson());
     }
 }

@@ -1,19 +1,21 @@
 package com.example.core.events.bankAccount;
 
 
+import com.example.core.dto.CommissionDTO;
 import com.example.core.dto.MoneyTransferDTO;
 import org.springframework.context.ApplicationEvent;
 
 
 public class BalanceUpdatedEvent extends ApplicationEvent {
-    private final MoneyTransferDTO moneyTransferDTO;
+    private final CommissionDTO commissionDTO;
 
-    public BalanceUpdatedEvent(Object source, MoneyTransferDTO moneyTransferDTO) {
+
+    public BalanceUpdatedEvent(Object source, CommissionDTO commissionDTO) {
         super(source);
-        this.moneyTransferDTO = moneyTransferDTO;
+        this.commissionDTO=commissionDTO;
     }
 
-    public MoneyTransferDTO getMoneyTransferDTO() {
-        return moneyTransferDTO;
+    public CommissionDTO  getCommissionDTO() {
+        return commissionDTO;
     }
 }

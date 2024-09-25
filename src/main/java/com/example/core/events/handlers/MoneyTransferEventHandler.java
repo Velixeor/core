@@ -1,6 +1,7 @@
 package com.example.core.events.handlers;
 
 
+import com.example.core.dto.CommissionDTO;
 import com.example.core.dto.MoneyTransferDTO;
 import com.example.core.entity.Message;
 import com.example.core.entity.MoneyTransferStatus;
@@ -18,6 +19,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 
 @Component
@@ -48,6 +51,16 @@ public class MoneyTransferEventHandler {
         moneyTransferDTO.setStatus(MoneyTransferStatus.PROCESSING);
         publisher.publishEvent(new MoneyTransferProcessedEvent(this, moneyTransferDTO));
     }
+    public CommissionDTO convertMoneyTransferDTOToCommissionDTO(MoneyTransferDTO moneyTransferDTO) {
+        CommissionDTO commissionDTO = CommissionDTO.builder()
+                .fromWhom(moneyTransferDTO.getBankAccountFromId())
+                .toWhom(moneyTransferDTO.getBankAccountToId())
+                .amount(BigDecimal.valueOf(moneyTransferDTO.getCount()))
+                .currency(moneyTransferDTO.getCurrency())
+                .build();
+
+        return commissionDTO;
+    }
 
     @EventListener
     public void handleMoneyTransferInProgressEvent(MoneyTransferProcessedEvent event) {
@@ -55,7 +68,8 @@ public class MoneyTransferEventHandler {
         try {
             bankAccountService.updateBalanceBankAccountById(moneyTransferDTO.getBankAccountToId(), moneyTransferDTO.getCount());
             bankAccountService.updateBalanceBankAccountById(moneyTransferDTO.getBankAccountFromId(), -moneyTransferDTO.getCount());
-            publisher.publishEvent(new BalanceUpdatedEvent(this, moneyTransferDTO));
+
+            publisher.publishEvent(new BalanceUpdatedEvent(this, convertMoneyTransferDTOToCommissionDTO(moneyTransferDTO)));
         } catch (Exception e) {
             moneyTransferDTO.setStatus(MoneyTransferStatus.REJECTED);
             publisher.publishEvent(new MoneyTransferRejectedEvent(this, moneyTransferDTO, e.getMessage()));

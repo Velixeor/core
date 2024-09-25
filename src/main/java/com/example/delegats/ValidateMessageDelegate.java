@@ -24,7 +24,7 @@ public class ValidateMessageDelegate implements JavaDelegate {
     private final ResourceLoader resourceLoader;
     @Override
     public void execute(DelegateExecution execution) {
-        String camundajson=(String)execution.getVariable("s");
+        String camundajson = (String) execution.getVariable("savedM");
         CamundaMessage savedMessage = CamundaMessage.fromJson(camundajson);
 
         try {

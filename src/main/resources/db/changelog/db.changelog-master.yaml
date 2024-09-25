@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/db.changelog-3.0-create-money-transfer-table.yaml
   - include:
       file: db/changelog/db.changelog-4.0-create-message-table.yaml
+  - include:
+      file: db/changelog/db.changelog-5.0-create-outbox-commission-table.yaml

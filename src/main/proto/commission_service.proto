@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package my.grpc.service;
+
+// Опционально: можно указать java_package и java_outer_classname
+option java_package = "my.grpc.service";
+option java_outer_classname = "CommissionServiceProto";
+
+// Сервис для работы с комиссиями
+service CommissionService {
+  // Метод для отправки данных комиссии
+  rpc SendCommission (CommissionRequest) returns (CommissionResponse);
+}
+
+// Сообщение запроса, соответствующее CommissionDTO
+message CommissionRequest {
+  int32 id = 1;           // Идентификатор комиссии
+  int32 from_whom = 2;     // От кого (отправитель)
+  int32 to_whom = 3;       // Кому (получатель)з
+  double amount = 4;       // Сумма комиссии
+  string currency = 5;     // Валюта комиссии
+}
+
+// Сообщение ответа на запрос
+message CommissionResponse {
+  bool success = 1;        // Успешна ли операция
+  string message = 2;      // Сообщение, например, статус или ошибка
+}

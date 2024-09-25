@@ -3,6 +3,7 @@ package com.example.core.controller;
 
 import com.example.core.dto.MoneyTransferDTO;
 import com.example.core.service.MoneyTransferService;
+import com.example.core.service.RabbitMqService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class MoneyTransferController {
     private final MoneyTransferService moneyTransferService;
+    private  final RabbitMqService rabbitMqService;
 
     @Operation(
             summary = "Создание платежа",
@@ -28,5 +30,10 @@ public class MoneyTransferController {
     @PostMapping("/create")
     public ResponseEntity<MoneyTransferDTO> createMoneyTransfer(@RequestBody MoneyTransferDTO moneyTransferDTO) {
         return new ResponseEntity<>(moneyTransferService.createMoneyTransfer(moneyTransferDTO), HttpStatus.CREATED);
+    }
+    @PostMapping("/create-xml")
+    public ResponseEntity<Void> createMoneyTransferByXml(@RequestBody String xml) {
+        rabbitMqService.receivePaymentXMl(xml);
+        return new ResponseEntity<>( HttpStatus.CREATED);
     }
 }
