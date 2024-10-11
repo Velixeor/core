@@ -2,6 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: 1
       author: postgres
+      validCheckSum: ANY
       changes:
         - createTable:
             tableName: outbox_commission
@@ -32,5 +33,10 @@ databaseChangeLog:
               - column:
                   name: currency
                   type: VARCHAR(3)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(50)
                   constraints:
                     nullable: false

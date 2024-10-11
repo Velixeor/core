@@ -20,4 +20,5 @@ public class CommissionDTO {
     private Integer toWhom;
     private BigDecimal amount;
     private String currency;
+    private String status;
 }

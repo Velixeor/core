@@ -32,4 +32,6 @@ public class Commission {
 
     @Column(name = "currency", nullable = false)
     private String currency;
+    @Column(name = "status", nullable = false)
+    private String status;
 }

@@ -15,44 +15,43 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class GrpcService {
-
-    public void sendSynchronizedBillingRequest(CommissionDTO commissionDTO){
+    public boolean sendSynchronizedBillingRequest(CommissionDTO commissionDTO) {
         ManagedChannel channel = null;
+        boolean isSuccess = false;
 
         try {
-
-            channel = ManagedChannelBuilder.forAddress("localhost", 50051)
-                    .usePlaintext() // Отключаем TLS для локальной разработки
+            channel = ManagedChannelBuilder.forAddress("localhost", 9090)
+                    .usePlaintext()
                     .build();
-
 
             CommissionServiceGrpc.CommissionServiceBlockingStub commissionStub = CommissionServiceGrpc.newBlockingStub(channel);
 
-
             CommissionServiceProto.CommissionRequest request = CommissionServiceProto.CommissionRequest.newBuilder()
-                    .setId(commissionDTO.getId())            // Идентификатор комиссии
-                    .setFromWhom(commissionDTO.getFromWhom())         // Идентификатор отправителя
-                    .setToWhom(commissionDTO.getToWhom())           // Идентификатор получателя
-                    .setAmount(commissionDTO.getAmount().doubleValue())        // Сумма комиссии
-                    .setCurrency(commissionDTO.getCurrency())       // Валюта комиссии
+                    .setId(commissionDTO.getId())
+                    .setFromWhom(commissionDTO.getFromWhom())
+                    .setToWhom(commissionDTO.getToWhom())
+                    .setAmount(commissionDTO.getAmount().doubleValue())
+                    .setCurrency(commissionDTO.getCurrency())
                     .build();
 
-            // Отправляем запрос через gRPC и получаем ответ
+
             CommissionServiceProto.CommissionResponse response = commissionStub.sendCommission(request);
 
-            // Обрабатываем ответ
+
             if (response.getSuccess()) {
                 System.out.println("Commission processed successfully.");
+                isSuccess = true;
             } else {
                 System.out.println("Failed to process commission: " + response.getMessage());
             }
         } catch (Exception e) {
             System.err.println("Error while sending gRPC request: " + e.getMessage());
         } finally {
-
             if (channel != null) {
                 channel.shutdown();
             }
         }
+
+        return isSuccess;
     }
 }

@@ -33,14 +33,28 @@ public class CommissionService {
         return transferringDataInCommissionDTOFromCommission(savedCommission);
     }
 
-    //@Retryable(value = {Exception.class}, maxAttempts = Integer.MAX_VALUE, backoff = @Backoff(delay = 10800000))
-    @Scheduled(fixedDelay = 10800000)
+
+    @Scheduled(fixedDelay = 10000000)
     public void retryCommissionWithDelay() {
-        List<Commission> commissions = commissionRepository.findAllForUpdate();
-        for(int i=0;i<commissions.size();i++){
-            grpcService.sendSynchronizedBillingRequest(transferringDataInCommissionDTOFromCommission(commissions.get(i)));
+        List<Commission> commissions = commissionRepository.findTop5000ByStatusStart();
+        for (Commission commission : commissions) {
+
+            boolean success = grpcService.sendSynchronizedBillingRequest(transferringDataInCommissionDTOFromCommission(commission));
+
+            if (success) {
+                commission.setStatus("OK");
+                commissionRepository.save(commission);
+            }else {
+                commission.setStatus("Start");
+                commissionRepository.save(commission);
+            }
         }
     }
+    @Scheduled(fixedDelay = 1000000)
+    public void retryDeleteCommission() {
+       commissionRepository.deleteAllByStatus("OK");
+    }
+
 
 
     private void transferringDataInCommissionFromCommissionDTO(final CommissionDTO commissionDTO,
@@ -50,6 +64,7 @@ public class CommissionService {
         commission.setToWhom(commissionDTO.getToWhom());
         commission.setAmount(commissionDTO.getAmount());
         commission.setCurrency(commissionDTO.getCurrency());
+        commission.setStatus(commissionDTO.getStatus());
     }
 
     private CommissionDTO transferringDataInCommissionDTOFromCommission(final Commission commission) {
@@ -59,6 +74,7 @@ public class CommissionService {
         commissionDTO.setToWhom(commission.getToWhom());
         commissionDTO.setAmount(commission.getAmount());
         commissionDTO.setCurrency(commission.getCurrency());
+        commissionDTO.setStatus(commission.getStatus());
         return commissionDTO;
     }
 
