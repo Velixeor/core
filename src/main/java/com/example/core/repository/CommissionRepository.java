@@ -19,7 +19,7 @@ public interface CommissionRepository extends JpaRepository<Commission, Integer>
             "   SELECT * FROM core.outbox_commission " +
             "   WHERE status='Start' " +
             "   LIMIT 5000 " +
-            "   FOR UPDATE " +
+            "   FOR UPDATE Skip Locked " +
             ") " +
             "UPDATE core.outbox_commission " +
             "SET status='Processing' " +
