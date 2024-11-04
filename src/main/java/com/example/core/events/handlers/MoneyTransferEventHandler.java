@@ -15,6 +15,7 @@ import com.example.core.repository.MoneyTransferRepository;
 import com.example.core.service.BankAccountService;
 import com.example.core.service.MoneyTransferService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MoneyTransferEventHandler {
@@ -34,6 +35,7 @@ public class MoneyTransferEventHandler {
 
     @EventListener
     public void handleMoneyTransferCreatedEvent(MoneyTransferCreatedEvent event) {
+        log.debug("Create MT DTO");
         moneyTransferService.createMoneyTransfer(event.getMoneyTransferDTO());
         publisher.publishEvent(new MoneyTransferSavedEvent(this, event.getMoneyTransferDTO(), event.getMessage()));
     }
@@ -41,6 +43,7 @@ public class MoneyTransferEventHandler {
     @EventListener
     public void handleMoneyTransferSavedEvent(MoneyTransferSavedEvent event) {
         Message message = event.getMessage();
+        log.debug("MT after saved: "+moneyTransferRepository.getMoneyTransferByUid(event.getMoneyTransferDTO().getId()));
         message.setMoneyTransfer(moneyTransferRepository.getMoneyTransferByUid(event.getMoneyTransferDTO().getId()));
         publisher.publishEvent(new MessageUidUpdatedEvent(this, message, event.getMoneyTransferDTO()));
     }
@@ -49,6 +52,7 @@ public class MoneyTransferEventHandler {
     public void handleMessageUidUpdatedEvent(MessageUidUpdatedEvent event) {
         MoneyTransferDTO moneyTransferDTO = event.getMoneyTransferDTO();
         moneyTransferDTO.setStatus(MoneyTransferStatus.PROCESSING);
+        log.debug("MT DTO after update status: "+  moneyTransferDTO);
         publisher.publishEvent(new MoneyTransferProcessedEvent(this, moneyTransferDTO));
     }
     public CommissionDTO convertMoneyTransferDTOToCommissionDTO(MoneyTransferDTO moneyTransferDTO) {
@@ -68,10 +72,11 @@ public class MoneyTransferEventHandler {
         try {
             bankAccountService.updateBalanceBankAccountById(moneyTransferDTO.getBankAccountToId(), moneyTransferDTO.getCount());
             bankAccountService.updateBalanceBankAccountById(moneyTransferDTO.getBankAccountFromId(), -moneyTransferDTO.getCount());
-
+            log.debug("Update balance to: "+moneyTransferDTO.getBankAccountToId()+" from: "+moneyTransferDTO.getBankAccountFromId());
             publisher.publishEvent(new BalanceUpdatedEvent(this, convertMoneyTransferDTOToCommissionDTO(moneyTransferDTO)));
         } catch (Exception e) {
             moneyTransferDTO.setStatus(MoneyTransferStatus.REJECTED);
+            log.debug("Failed to update: "+e);
             publisher.publishEvent(new MoneyTransferRejectedEvent(this, moneyTransferDTO, e.getMessage()));
         }
     }

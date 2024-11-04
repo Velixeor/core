@@ -38,5 +38,12 @@ camunda:
 
 messages:
   type: event
+logging:
+  file:
+    name: E:/logs/application.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level %pid --- [%thread] %logger{36} : %msg%n"
+  level:
+    root: info
 
 urlpayments: ${URLPAYMENTS:http://localhost:8080/api/v1}

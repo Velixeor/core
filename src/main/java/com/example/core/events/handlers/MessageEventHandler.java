@@ -14,6 +14,7 @@ import com.example.core.repository.MessageRepository;
 import com.example.core.service.BankAccountService;
 import com.example.paymentXSD.Document;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.Resource;
@@ -37,7 +38,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Iterator;
 
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class MessageEventHandler {
@@ -52,6 +53,7 @@ public class MessageEventHandler {
         Message message = new Message();
         message.setBody(event.getMessage());
         messageRepository.save(message);
+        log.debug("Saved message: "+message);
         publisher.publishEvent(new MessageSavedEvent(this, message));
     }
 
@@ -65,6 +67,7 @@ public class MessageEventHandler {
         } catch (SAXException e) {
             publisher.publishEvent(new MessageRejectedEvent(this, message, "Validation failed"));
         }
+        log.debug("Successful validating message");
         publisher.publishEvent(new MessageValidatedEvent(this, message));
     }
 
@@ -76,6 +79,7 @@ public class MessageEventHandler {
         } catch (XPathExpressionException e) {
             publisher.publishEvent(new MessageRejectedEvent(this, message, "Bank account not found"));
         }
+        log.debug("Successful validating event");
         publisher.publishEvent(new BankAccountVerifiedEvent(this, message));
     }
 
@@ -92,8 +96,10 @@ public class MessageEventHandler {
         Message message = event.getMessage();
         try {
             Document document = unmarshalMessageToDocument(message);
+            log.debug("Unmarshaled document:"+document.toString());
             publisher.publishEvent(new DocumentUnmarshalledEvent(this, message, document));
         } catch (Exception e) {
+            log.debug("Failed unmarshaled document:"+e);
             throw new PaymentCreateException(message.getBody());
         }
     }

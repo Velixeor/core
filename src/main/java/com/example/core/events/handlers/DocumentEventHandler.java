@@ -6,6 +6,7 @@ import com.example.core.events.DocumentUnmarshalledEvent;
 import com.example.core.events.moneyTransfer.MoneyTransferCreatedEvent;
 import com.example.paymentXSD.Document;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DocumentEventHandler {
@@ -36,6 +37,7 @@ public class DocumentEventHandler {
         moneyTransferDTO.setCount(document.getFIToFICstmrCdtTrf().getGrpHdr().getTtlIntrBkSttlmAmt().getValue().intValue());
 
         moneyTransferDTO.setId(UUID.randomUUID());
+        log.debug("Successful create MT DTO");
         publisher.publishEvent(new MoneyTransferCreatedEvent(this, moneyTransferDTO, event.getMessage()));
     }
 }
