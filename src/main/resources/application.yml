@@ -42,7 +42,7 @@ logging:
   file:
     name: E:/logs/application.log
   pattern:
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level %pid --- [%thread] %logger{36} : %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level ${PID} --- [%thread] %logger{36} : %msg%n"
   level:
     root: info
 
